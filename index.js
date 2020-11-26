@@ -21,7 +21,7 @@ const main = async(request) =>{
             intentNames.push(intent.name)
         });
         for(const property in entities){
-            console.log(entities[property][0].value);
+            // console.log(entities[property][0].value);
             entityRoles.push(entities[property][0].role);
             entityValues.push(entities[property][0].value);
         }
@@ -32,13 +32,26 @@ const main = async(request) =>{
         if(entityRoles[0] === 'xkcd_comic'){
             message = await xkcd();
         }
+        if(entityRoles[0] === 'meme'){
+            message = await meme();
+        }
         const response = {
             message : message
         };
-        console.log(response);
+        // console.log(response);
         return response
     } catch (error) {
-        return new Error(error);
+        throw new Error(error);
+    }
+}
+
+const meme = async() =>{
+    try{
+        const memejson = await axios.get("https://some-random-api.ml/meme");
+        const memeurl = memejson.data.image;
+        return memeurl;
+    }catch(error){
+        throw new Error(error);
     }
 }
 
@@ -51,7 +64,7 @@ const wit = async(message) =>{
         const getWit = await axios.get(`https://api.wit.ai/message?v=20201015&q=${messageAsRequest}`, options);
         return getWit.data;
     } catch (error) {
-        return new Error(error);
+        throw new Error(error);
     }
 }
 
